@@ -119,6 +119,7 @@ public class ScrollableLayout extends FrameLayout {
     private SavedState mSavedState;
     private boolean mIsScrollYRestored;
     private float mFlingFriction = ViewConfiguration.getScrollFriction();
+    private boolean mCanScrollUpOnTouchActionDown;
 
 
     {
@@ -263,6 +264,9 @@ public class ScrollableLayout extends FrameLayout {
         if (mCanScrollVerticallyDelegate != null) {
 
             if (isScrollingBottomTop) {
+                if (mCanScrollUpOnTouchActionDown) {
+                    return -1;
+                }
 
                 // if not dragging draggable then return, else do not return
                 if (!mIsDraggingDraggable
@@ -313,6 +317,12 @@ public class ScrollableLayout extends FrameLayout {
                 mIsDraggingDraggable = mDraggableRect.contains(x, y);
             } else {
                 mIsDraggingDraggable = false;
+            }
+
+            if (mCanScrollVerticallyDelegate != null) {
+                mCanScrollUpOnTouchActionDown = mCanScrollVerticallyDelegate.canScrollVertically(-1);
+            } else {
+                mCanScrollUpOnTouchActionDown = false;
             }
         }
 
